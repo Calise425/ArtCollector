@@ -10,23 +10,12 @@ const Preview = ({setSearchResults, setFeaturedResult, setIsLoading, searchResul
     
     try {
       const response = await fetchQueryResultsFromURL(pageUrl);
-      const result = await response.json();
-      setSearchResults(result);
+      setSearchResults(response);
     } catch (error) {
       console.log("Uh oh, issue with fetchPage", error);
     } finally {
       setIsLoading(false);
     }
-  }
-
-  function handleObjectClick(event, records) {
-    event.preventDefault();
-    setFeaturedResult(records);
-    
-    if (records.primaryimageurl) {
-      return <img src={records.primaryimageurl} alt={records.description} />;
-    }
-    return records.title ? <h3>{records.title}</h3> : <h3>MISSING INFO</h3>;
   }
 
   return (
@@ -48,12 +37,17 @@ const Preview = ({setSearchResults, setFeaturedResult, setIsLoading, searchResul
         </button>
       </header>
       <section className="results">
-        {records.map((records, index) => (
+        {records.map((record, index) => (
           <div
             key={index}
             className="object-preview"
-            onClick={(event) => handleObjectClick(event, records)}
-          ></div>
+            onClick={(event) => {
+              event.preventDefault();
+              setFeaturedResult(record);
+            }}
+          >{record.primaryimageurl ? <img src={record.primaryimageurl} alt={record.description} /> : null}
+          {record.title ? <h3>{record.title}</h3> : <h3>MISSING INFO</h3>
+          }</div>
         ))}
       </section>
     </aside>

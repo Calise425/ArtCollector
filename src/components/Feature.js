@@ -7,44 +7,46 @@ const Searchable = (props) => {
     const searchValue = props.searchValue;
     const setIsLoading = props.setIsLoading;
     const setSearchResults = props.setSearchResults;
-    <span className="content">
-        <a href="#" onClick={async (event) => {
-            event.preventDefault();
-            setIsLoading(true);
-            try {
-                const response = await fetchQueryResultsFromTermAndValue(searchTerm, searchValue);
-                const result = await response.json();
-                setSearchResults(result);
-            } catch (error) {
-                console.error("Uh oh, problem in Searchable", error)
-            } finally {
-                setIsLoading(false);
-            }
-        }}>SOME SEARCH TERM</a>
-    </span>
-}
 
-const Feature = ({ featuredResult }) => {
+    return (
+        <span className="content">
+            <a href="#" onClick={async (event) => {
+                event.preventDefault();
+                setIsLoading(true);
+                try {
+                    const response = await fetchQueryResultsFromTermAndValue(searchTerm, searchValue);;
+                    setSearchResults(response);
+                } catch (error) {
+                    console.error("Uh oh, problem in Searchable", error);
+                } finally {
+                    setIsLoading(false);
+                }
+            }}>{searchValue}</a>
+        </span>
+    );
+};
+
+const Feature = ({ featuredResult, setIsLoading, setSearchResults }) => {
     if (!featuredResult) {
-      return <main id="feature"></main>;
+        return <main id="feature"></main>;
     }
 
     const {
-      title,
-      dated,
-      images,
-      primaryimageurl,
-      description,
-      culture,
-      style,
-      technique,
-      medium,
-      dimensions,
-      people,
-      department,
-      division,
-      contact,
-      creditline,
+        title,
+        dated,
+        images,
+        primaryimageurl,
+        description,
+        culture,
+        style,
+        technique,
+        medium,
+        dimensions,
+        people,
+        department,
+        division,
+        contact,
+        creditline,
     } = featuredResult;
 
     const facts = [
@@ -61,27 +63,18 @@ const Feature = ({ featuredResult }) => {
         { name: 'creditline', value: creditline },
     ];
 
-    facts.map((fact, index) => (
+    const factsElements = facts.map((fact, index) => (
         <React.Fragment key={index}>
-          <span className="title">{fact.name.toUpperCase()}</span>
-          <span className="content">{fact.value}</span>
+            <span className="title">{fact.name.toUpperCase()}</span>
+            <span className="content">{fact.value}</span>
         </React.Fragment>
     ));
 
     const searchableFacts = [
         { name: 'culture', value: culture },
         { name: 'technique', value: technique },
-        { name: 'medium', value: medium.toLowerCase() },
+        { name: 'medium', value: medium ? medium.toLowerCase() : undefined },
     ];
-
-    renderFacts = () => {
-        searchableFacts.map((fact, index) => (
-        <React.Fragment key={index}>
-          <span className="title">{fact.name.toUpperCase()}</span>
-          <span className="content">{fact.value}</span>
-        </React.Fragment>
-        ));
-    }
 
     if (people) {
         people.forEach((person) => {
@@ -89,31 +82,25 @@ const Feature = ({ featuredResult }) => {
         });
     }
 
-    if (!images) {
-        return null;
-    }
+    const imageCollection = images.length > 0 ? images.map((image, index) => (
+        <img src={image} alt="SOMETHING_WORTHWHILE" key={index} />
+    )) : null;
 
-    if (images) {
-        const imageCollection = <section className="photos">
-            {images.map((image, index) => (
-            <img src={image} alt="SOMETHING_WORTHWHILE" key={index} />))}
-        </section>
-        
-        return imageCollection;
-    };
-  
     return (
         <main id="feature">
             <div className="object-feature">
                 <header>
-                <h3>OBJECT TITLE</h3>
-                <h4>WHEN IT IS DATED</h4>
+                    <h3>{title}</h3>
+                    <h4>{dated}</h4>
                 </header>
                 <section className="facts">
-                {renderFacts}
+                    {factsElements}
+                    {searchableFacts.map((fact, index) => (
+                        <Searchable searchTerm = {fact.name} searchValue = {fact.value} setIsLoading = {setIsLoading} setSearchResults = {setSearchResults} key = {index}/>
+                    ))}
                 </section>
                 <section className="photos">
-                {imageCollection}
+                    {imageCollection}
                 </section>
             </div>
         </main>
@@ -121,3 +108,4 @@ const Feature = ({ featuredResult }) => {
 };
 
 export default Feature;
+

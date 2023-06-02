@@ -15,7 +15,6 @@ const Search = ({setIsLoading, setSearchResults}) => {
 
   useEffect(() => {
     Promise.all([fetchAllCenturies(), fetchAllClassifications()])
-      .then((response) => {return response.json()})
       .then(([centuries, classifications]) => {
         setCenturyList(centuries);
         setClassificationList(classifications);
@@ -32,9 +31,9 @@ const Search = ({setIsLoading, setSearchResults}) => {
         event.preventDefault();
         setIsLoading(true);
         try {
-          const response = await fetchQueryResults();
-          const queryResults = await response.json();
-          setSearchResults(queryResults);
+          const response = await fetchQueryResults({century, classification, queryString});
+          console.log(response);
+          setSearchResults(response);
         } catch (error) {
           console.error("uh oh, error with form in Search", error);
         } finally {
@@ -49,7 +48,9 @@ const Search = ({setIsLoading, setSearchResults}) => {
           type="text"
           placeholder="enter keywords..."
           value={queryString}
-          onChange={(event) => setQueryString(event.target.value)}
+          onChange={(event) => {
+            console.log(queryString)
+            setQueryString(event.target.value)}}
         />
       </fieldset>
       <fieldset>
@@ -65,7 +66,7 @@ const Search = ({setIsLoading, setSearchResults}) => {
         >
           <option value="any">Any</option>
           {classificationList.map((el) => {
-            return <option value={el} key={el}>{el}</option>;
+            return <option value={el.name} key={el.id}>{el.name}</option>;
           })}
         </select>
       </fieldset>
@@ -81,7 +82,7 @@ const Search = ({setIsLoading, setSearchResults}) => {
         >
           <option value="any">Any</option>
           {centuryList.map((el) => {
-            return <option value={el} key={el}>{el}</option>;
+            return <option value={el.name} key={el.id}>{el.name}</option>;
           })}
         </select>
       </fieldset>
