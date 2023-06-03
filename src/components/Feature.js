@@ -83,7 +83,7 @@ const Feature = ({ featuredResult, setIsLoading, setSearchResults }) => {
     }
 
     const imageCollection = images.length > 0 ? images.map((image, index) => (
-        <img src={image} alt="SOMETHING_WORTHWHILE" key={index} />
+        <img src={image.baseimageurl} alt= "Beautiful Image Here" key={index} />
     )) : null;
 
     return (
@@ -100,6 +100,8 @@ const Feature = ({ featuredResult, setIsLoading, setSearchResults }) => {
                     ))}
                 </section>
                 <section className="photos">
+                    {console.log(imageCollection)}
+                    {console.log(images)}
                     {imageCollection}
                 </section>
             </div>

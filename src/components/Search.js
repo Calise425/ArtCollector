@@ -32,7 +32,6 @@ const Search = ({setIsLoading, setSearchResults}) => {
         setIsLoading(true);
         try {
           const response = await fetchQueryResults({century, classification, queryString});
-          console.log(response);
           setSearchResults(response);
         } catch (error) {
           console.error("uh oh, error with form in Search", error);
